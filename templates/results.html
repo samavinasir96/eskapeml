@@ -1,0 +1,115 @@
+{% extends './base.html' %} {% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<style>
+    table {
+    font-family: Calibri;
+    border-collapse: collapse;
+    width: 80%;
+    margin-inline-start: 120px;
+    margin-top: 3%;
+  }
+  
+  td, th {
+    font-family: Calibri;
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    font-family: Calibri;
+    background-color: #dddddd;
+  }
+  tbody{
+    font-family: Calibri;
+      margin: 100px; 
+  }
+  input{
+    margin-inline-start: 120px;
+    font-family: Calibri;
+  }
+  button{
+    font-family: Calibri;
+    display: block;
+    font-size: medium;
+    width: 45%;
+    height: 35px;
+    border: none;
+    background-color: #091E34;
+    color: #ffff;
+    align-items: center;
+    margin-inline-start: 320px;
+    margin-bottom: 2%;
+  }  
+  h3{
+    margin-inline-start: 120px;
+    font-family: Calibri;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 0.5%;
+  }
+  form{
+    font-family: Calibri;
+    font-size: 14px;
+
+  }
+</style>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Protein ID</th>
+                <th>Prediction</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td>{{ result.Protein_ID }}</td>
+                <td>
+                    {% if result.Prediction == -1 %}
+                        Non-vaccine target
+                    {% elif result.Prediction == 1 %}
+                        Vaccine candidate
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <h3>Feature Files:</h3>
+    <form method="post" action="{% url 'download_csv' %}">
+      {% csrf_token %}
+      <label for="Physiochemical parameters">
+          <input type="checkbox" name="csv_files" value="physiochemical_parameters.csv"> Physiochemical parameters
+          <br>
+      </label><br>
+      <label for="Epitope analysis">
+          <input type="checkbox" name="csv_files" value="epitope_analysis.csv"> Epitope analysis
+          <br>
+      </label><br>
+      <label for="Adhesion probability">
+          <input type="checkbox" name="csv_files" value="adhesion_probability.csv"> Adhesion probability
+          <br>
+      </label><br>
+      <label for="Signal peptide analysis">
+          <input type="checkbox" name="csv_files" value="signalp_analysis.csv"> Signal peptide analysis
+          <br>
+      </label><br>
+      <button type="submit">Download Feature File(s)</button>
+  </form>
+
+  <form action="{% url 'delete_files' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Complete Analysis</button>
+  </form>
+</body>
+</html>
+{% endblock %}
